@@ -1,4 +1,18 @@
-from data_manager.parsed_data import ParsedData
+class ParsedData:
+    def __init__(self, data):
+        self.addr = int(data[2], 16)
+        self.number = int(data[0], 10)
+        # self._hash = int(data[1], 16)
+        self.value = float(data[3])
+
+    def to_string(self):
+        return "['" + hex(self.addr) + "', '" + str(self.number) + "', '" + str(self.value) + "']"
+
+    def get_addr(self):
+        return hex(self.addr)
+
+    def get_ctx(self) -> list:
+        return [hex(self.addr), self.number, self.value]
 
 
 class DB:
@@ -6,22 +20,33 @@ class DB:
         self.db = []  # array of UserData
         with open(file_path, 'r') as reader:
             for line in reader:
-                if line.split(',')[0] == "Block Number":
+                if (line.split(',')[0] == "Block Number") | (line.split(',')[0] == "Address"):
                     continue
                 pd = ParsedData(line.split(','))
-                self.db.append(pd)
+                self.insert_data(pd)
 
-    ]
-
-    def get_user_data(self, user_addr: str) -> (bool, UserData):
-        if user_addr in self.db:
-            return True, self.db[user_addr]
+    def pop_data(self) -> (bool, list):
+        if len(self.db) > 0:
+            return True, self.db.pop(0)
         else:
-            return False, UserData()
+            return False, []
 
-    def get_user_list(self):
-        return self.db.keys()
+    def insert_data(self, data: ParsedData):
+        self.sanity_check(data)
+        self.db.append(data.get_ctx())
+
+    def sanity_check(self, data: ParsedData) -> bool:
+        db_size = len(self.db)
+        if db_size != 0:
+            prev = self.db[len(self.db) - 1]
+            if prev[1] > data.number:
+                raise Exception("Block number must be bigger than previous one")
+        return True
+
+    def len(self):
+        return len(self.db)
 
     def print_db(self):
-        for item in self.db.values():
-            item.print_all()
+        for item in self.db:
+            print("['" + item[0] + "', '" + str(item[1]) + "', '" + str(item[2]) + "']")
+

@@ -15,9 +15,10 @@ class ParsedData:
         return [hex(self.addr), self.number, self.value]
 
 
-class DB:
+class SummaryDB:
     def __init__(self, file_path: str):
         self.db = []  # array of UserData
+        self.reward_total = 0
         with open(file_path, 'r') as reader:
             for line in reader:
                 if (line.split(',')[0] == "Block Number") | (line.split(',')[0] == "Address"):

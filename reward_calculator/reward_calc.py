@@ -1,4 +1,4 @@
-from data_manager.db import DB
+from data_manager.summary_parser import SummaryDB
 from reward_calculator.additional_lane import AdditionLane
 import json
 
@@ -18,7 +18,7 @@ class User:
 
 
 class RewardCalc:
-    def __init__(self, config_file_path: str, kind: str, db: DB):
+    def __init__(self, config_file_path: str, kind: str, db: SummaryDB):
         # set configuration parameters
         self._starting_height = 0
         self._end_height = 0

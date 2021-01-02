@@ -1,10 +1,10 @@
 {
-  "starting_block_height": 11372650,
-  "end_block_height": 11557090,
+  "starting_block_height": 11373219,
+  "end_block_height": 11572613,
   "lp_staking": {
-    "reward_per_block": 100
+    "reward_per_block": "217.01388888888889"
   },
   "bfc_staking": {
-    "reward_per_block": 0
+    "reward_per_block": "54.25347222222222"
   }
 }

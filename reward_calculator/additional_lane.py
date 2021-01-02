@@ -1,5 +1,5 @@
 class AdditionLane:
-    def __init__(self, starting_height: int, rewards_per_block: int):
+    def __init__(self, starting_height: int, rewards_per_block: float):
         self._lane = 0
         self._rewards_per_block = rewards_per_block
         self._latest_block = 0
@@ -7,12 +7,22 @@ class AdditionLane:
 
     def update_lane(self, current_block: int, total: float):
 
-        if not self._latest_block < current_block:
+        if self._latest_block == current_block:
             return
 
-        delta = current_block - self._latest_block
+        if not self._latest_block < current_block:
+            raise Exception("Current height(" + str(current_block) + ") must be bigger than latest height("
+                            + str(self._latest_block) + ")")
+
+        delta = 0
         if self._reward_start_height > current_block:
-            delta = current_block - self._reward_start_height
+            self._latest_block = current_block
+            return
+        else:
+            if self._reward_start_height > self._latest_block:
+                delta = current_block - self._reward_start_height
+            else:
+                delta = current_block - self._latest_block
 
         if total != 0:
             self._lane += self._rewards_per_block * delta / total

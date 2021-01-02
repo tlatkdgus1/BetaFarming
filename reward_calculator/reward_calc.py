@@ -31,7 +31,7 @@ class RewardCalc:
             json_obj = json.load(json_file)
             self._starting_height = json_obj["starting_block_height"]
             self._end_height = json_obj["end_block_height"]
-            self._reward_per_block = json_obj[kind]["reward_per_block"]
+            self._reward_per_block = float(json_obj[kind]["reward_per_block"])
 
         # set parsed raw data
         self.db = db
@@ -43,8 +43,7 @@ class RewardCalc:
         self.user_book = {}  # key: user addr, value: [user deposit amount, pointOnLane]
         self.reward_book = {}  # key: user addr, value: reward amount
 
-    def simulate_loop(self):
-
+    def simulate_loops(self):
         iter_limit = self.db.len()
         for i in range(iter_limit):
             success, ctx = self.db.pop_data()  # ctx: [addr, number, value]
@@ -93,3 +92,13 @@ class RewardCalc:
             user = self.user_book[user_addr]
             print("[" + user.addr + ", " + str(user.reward) +"]")
 
+    def total_reward(self) -> float:
+        user_list = self.user_book.keys()
+        total_reward = 0
+        for user_addr in user_list:
+            user = self.user_book[user_addr]
+            total_reward += user.reward
+        return total_reward
+
+    def get_initial_params(self) -> list:
+        return [self._starting_height, self._end_height, self._reward_per_block]
